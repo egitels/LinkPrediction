@@ -17,6 +17,7 @@ public:
     void addEdge(int src, int dest, int destWeight);
     string to_string();
     vector<LinkedList> adjVector;    
+    void print() const;    
 };
 
 #endif

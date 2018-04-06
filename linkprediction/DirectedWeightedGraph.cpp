@@ -21,16 +21,9 @@ void DirectedWeightedGraph::addEdge(int src, int dest, int destWeight){
     adjVector[src].add(dest, destWeight);
 }
 
-std::string DirectedWeightedGraph::to_string(){
-    string out = "";
+void DirectedWeightedGraph::print() const{
     for (size_t i = 0; i < adjVector.size(); ++i){
-        out += std::to_string(i) + ": ";
-        LinkedList::node *current = adjVector[i].getHead();
-        while (current != NULL){
-            out += "(" + std::to_string(current->data) + "->" + std::to_string(current->weight) + ") ";
-            current = current->next;
-        }
-        out += "\n";
+        cout << i << ": " << adjVector[i] << endl;
     }
-    return out;
 }
+

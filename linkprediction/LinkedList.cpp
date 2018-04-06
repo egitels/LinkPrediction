@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <sstream>
 #include <iostream>
+
 LinkedList::LinkedList(){
     head = NULL;
     current = NULL;
@@ -30,12 +31,22 @@ bool LinkedList::contains(int data){
     return false;
 }
 
-LinkedList::node* LinkedList::getHead(){
+LinkedList::node* LinkedList::getHead() const{
     return head;
 }
 
-LinkedList::node* LinkedList::getCurrent(){
+LinkedList::node* LinkedList::getCurrent() const{
     return current;
+}
+
+
+ostream & operator << (ostream &out, const LinkedList &n){
+    LinkedList::node* current = n.getHead();
+    while (current != NULL){
+        out << "->" << current->data << "{" << current->weight << "} "; 
+        current = current->next;
+    }
+    return out;
 }
 
 LinkedList::node* LinkedList::newNode(int data, int weight){
@@ -45,3 +56,6 @@ LinkedList::node* LinkedList::newNode(int data, int weight){
     newNode->next = NULL;
     return newNode;
 }
+
+
+

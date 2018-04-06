@@ -14,8 +14,8 @@ int main() {
     graph.addEdge(8, 9, 3);
     graph.addEdge(8, 5, 17);
     graph.addEdge(8, 2, 3);
-    cout << graph.to_string() << endl;
-
+   
+    graph.print();
     
     return 0;
 }
