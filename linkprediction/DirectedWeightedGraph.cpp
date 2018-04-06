@@ -27,7 +27,7 @@ std::string DirectedWeightedGraph::to_string(){
         out += std::to_string(i) + ": ";
         LinkedList::node *current = adjVector[i].getHead();
         while (current != NULL){
-            out += "(" + std::to_string(current->data) + "->" + std::to_string(current->weight) + ") ";
+            out += "->" + std::to_string(current->data) + "(" + std::to_string(current->weight) + ") ";
             current = current->next;
         }
         out += "\n";
