@@ -16,7 +16,7 @@ void LinkedList::add(int data, int weight){
         current = nIn;
     } else {
         current->next = nIn;
-        current = nIn;
+        current = current->next;
     }
 }
 
