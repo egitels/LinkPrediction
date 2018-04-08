@@ -17,6 +17,13 @@ public:
     void addEdge(int src, int dest, int destWeight);
     string to_string();
     vector<LinkedList> adjVector;    
+  
+    /**Call BFS a bunch of times to find all of the connected components,
+     * and then return the largest connected components*/
+    DirectedWeightedGraph GCC() const;
+
+    vector<int> BFS(int src) const;
+
     void print() const;    
 };
 

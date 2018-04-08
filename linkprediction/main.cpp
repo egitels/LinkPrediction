@@ -1,21 +1,28 @@
 #include "DirectedWeightedGraph.h"
 #include "LinkedList.h"
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
 int main() {
-    int v = 10;
+    int v = 6;
     DirectedWeightedGraph graph(v);
     
-    graph.addEdge(0, 5, 20);
-    graph.addEdge(0, 4, 1);
-    graph.addEdge(0, 3, 2);
-    graph.addEdge(8, 9, 3);
-    graph.addEdge(8, 5, 17);
-    graph.addEdge(8, 2, 3);
-   
+    graph.addEdge(0, 1, 1);
+    graph.addEdge(1, 2, 1);
+    graph.addEdge(0, 2, 1);
+    graph.addEdge(2, 3, 1);
+    graph.addEdge(3, 4, 1);
+    graph.addEdge(5, 4, 1);
+
     graph.print();
     
+    DirectedWeightedGraph gcc = graph.GCC();
+   
+    
+    gcc.print(); 
+
+
     return 0;
 }
