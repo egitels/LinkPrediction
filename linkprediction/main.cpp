@@ -16,12 +16,14 @@ int main() {
     graph.addEdge(3, 4, 1);
     graph.addEdge(5, 4, 1);
 
-    graph.print();
-    
+//    graph.print();
+  
+        
     DirectedWeightedGraph gcc = graph.GCC();
+    
    
     
-    gcc.print(); 
+    gcc.print();
 
 
     return 0;

@@ -24,25 +24,25 @@ void DirectedWeightedGraph::addEdge(int src, int dest, int destWeight){
 
 DirectedWeightedGraph DirectedWeightedGraph::GCC() const{
     
-
+    int biggestNode = 0;
     vector<int> maxComponent;
     for (int i = 0; i < V; ++i){
         vector<int> found = BFS(i);
         if (found.size() > maxComponent.size()){
             maxComponent = found;
-        }
-    }
-    
-    int biggestNode = 0;
-    for (int i : maxComponent){
-        if (i > biggestNode){
             biggestNode = i;
         }
     }
-
-    DirectedWeightedGraph subGraph(biggestNode + 1);
     
-    for (size_t i = 0; i < maxComponent.size(); ++i){
+//    for (int i : maxComponent){
+//        if (i > biggestNode){
+//            biggestNode = i;
+//        }
+//    } // switched this into the loop above because if you ran BFS on 0 and it was the original node (with current graph in main) you'd get 4 as your biggest node not 0.
+    DirectedWeightedGraph subGraph(maxComponent.size()+1);
+    
+    for (int i = 0; i < subGraph.V; ++i){
+        cout<<"here"<<endl;
         
         LinkedList::node* current;
         current = adjVector[i].getHead();
