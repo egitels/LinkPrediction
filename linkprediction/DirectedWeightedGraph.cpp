@@ -39,7 +39,7 @@ DirectedWeightedGraph DirectedWeightedGraph::GCC() const{
 //            biggestNode = i;
 //        }
 //    } // switched this into the loop above because if you ran BFS on 0 and it was the original node (with current graph in main) you'd get 4 as your biggest node not 0.
-    DirectedWeightedGraph subGraph(maxComponent.size()+1);
+    DirectedWeightedGraph subGraph(maxComponent.size()+1); //this was biggestnode+1 which for the current graph is 0+1 so needs to be max component vector size
     
     for (int i = 0; i < subGraph.V; ++i){
         cout<<"here"<<endl;
