@@ -1,6 +1,8 @@
 #include "DirectedWeightedGraph.h"
 #include "LinkedList.h"
 #include <list>
+
+//creates a Directed graph with number of nodes(vertexes) V, graph is a vector of linkedlists
 DirectedWeightedGraph::DirectedWeightedGraph(int V){
     this->V = V;
     for(int i = 0; i<V;i++){ 
@@ -8,6 +10,7 @@ DirectedWeightedGraph::DirectedWeightedGraph(int V){
     }
     
 }
+// adds an edge with error processing for a weighted directed graph
 void DirectedWeightedGraph::addEdge(int src, int dest, int destWeight){
     if (src < 0 || src >= (int)adjVector.size()){
         throw std::out_of_range("addEdge: " + std::to_string(src) + " is out of bounds");
@@ -21,7 +24,7 @@ void DirectedWeightedGraph::addEdge(int src, int dest, int destWeight){
      
     adjVector[src].add(dest, destWeight);
 }
-
+//finds the GCC of a graph, directed or undirected.
 DirectedWeightedGraph DirectedWeightedGraph::GCC() const{
     
     int biggestNode = 0;
@@ -100,6 +103,7 @@ DirectedWeightedGraph DirectedWeightedGraph::GCC() const{
  
 }*/
 
+//breadth-first search on the graph.
 vector<int> DirectedWeightedGraph::BFS(int src) const{
     vector<int> found;
     vector<bool> discovered(adjVector.size(), false); 
@@ -126,7 +130,7 @@ vector<int> DirectedWeightedGraph::BFS(int src) const{
     return found;
 }
 
-
+//print function
 void DirectedWeightedGraph::print() const{
     for (size_t i = 0; i < adjVector.size(); ++i){
         cout << i << ": " << adjVector[i] << endl;
