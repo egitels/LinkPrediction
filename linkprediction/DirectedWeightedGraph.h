@@ -21,7 +21,8 @@ public:
     /**Call BFS a bunch of times to find all of the connected components,
      * and then return the largest connected components*/
     DirectedWeightedGraph GCC() const;
-
+    int Djikstras(int src, int dest);
+    int LayerDeterminant(vector<int> parent,int vertex, int dest);
     vector<int> BFS(int src) const;
 
     void print() const;    

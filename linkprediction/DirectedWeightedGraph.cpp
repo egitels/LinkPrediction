@@ -42,10 +42,10 @@ DirectedWeightedGraph DirectedWeightedGraph::GCC() const{
 //            biggestNode = i;
 //        }
 //    } // switched this into the loop above because if you ran BFS on 0 and it was the original node (with current graph in main) you'd get 4 as your biggest node not 0.
-    DirectedWeightedGraph subGraph(maxComponent.size()+1); //this was biggestnode+1 which for the current graph is 0+1 so needs to be max component vector size
+    DirectedWeightedGraph subGraph(V+1); //this was biggestnode+1 which for the current graph is 0+1 so needs to be max component vector size
     
     for (int i = 0; i < subGraph.V; ++i){
-        cout<<"here"<<endl;
+ 
         
         LinkedList::node* current;
         current = adjVector[i].getHead();
@@ -128,6 +128,43 @@ vector<int> DirectedWeightedGraph::BFS(int src) const{
         }
     }   
     return found;
+}
+int DirectedWeightedGraph::Djikstras(int src, int dest){
+    vector<bool> discovered(adjVector.size(),false);
+    vector<int> parent(adjVector.size(),-1);
+    discovered[src] = true;
+    
+    list<int> queue;
+    queue.push_back(src);
+    while(!queue.empty()){
+        int vertex = queue.front();
+        if (vertex == dest){
+            return LayerDeterminant(parent, vertex, dest);
+        }
+        queue.pop_front();
+        
+        LinkedList::node* current;
+        current = adjVector[vertex].getHead();
+        while(current != NULL){
+            if(!discovered[current->data]){
+                discovered[current->data] = true;
+                queue.push_back(current->data);
+                parent[current->data] = vertex;
+            }
+            current = current->next;
+        }
+    }
+    return -1;
+}
+int DirectedWeightedGraph::LayerDeterminant(vector<int> parent,int vertex, int dest){
+    int layer = 0;
+    if(parent[vertex] == -1){
+        return layer;
+    }
+    LayerDeterminant(parent,parent[vertex],dest);
+    layer++;
+
+    return layer;
 }
 
 //print function
