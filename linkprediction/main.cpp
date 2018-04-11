@@ -24,17 +24,14 @@ int main() {
     gcc.print();
     cout<<endl; 
     vector<int> scores;    
-   // for(int i =0; i<gcc.V;i++){
-//	for(int j=i+1;j<gcc.V;j++){
-//		scores.push_back(gcc.Djikstras(i,j));
-//	}
-  //  }
-    scores.push_back(gcc.Djikstras(0,6));
-    scores.push_back(gcc.Djikstras(0,4));
-    for(int i = 0;i<scores.size();i++){
-	cout<<scores[i]<<endl;
+    for(int i =0; i<gcc.V;i++){
+        for(int j=i+1;j<gcc.V;j++){
+            scores.push_back(gcc.Djikstras(i,j));
+        }
     }
-    
+    for(int i = 0;i<scores.size();i++){
+        scores[i] = scores[i]*-1
+    } //here we take the negative of every score, we need to find a good method of knowing what 2 nodes we took the shortest path from to get the weight at each index, because we have to sort this vector
 
 
     return 0;
