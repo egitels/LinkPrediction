@@ -5,6 +5,7 @@
 
 using namespace std;
 
+
 int main() {
     int v = 10;
     DirectedWeightedGraph graph(v);
@@ -19,20 +20,20 @@ int main() {
     graph.addEdge(6, 7, 1);
 //    graph.print();
   
-        
+ 
     DirectedWeightedGraph gcc = graph.GCC();
     gcc.print();
     cout<<endl; 
-    vector<int> scores;    
-    for(int i =0; i<gcc.V;i++){
-        for(int j=i+1;j<gcc.V;j++){
-            scores.push_back(gcc.Djikstras(i,j));
+    vector<int> values;    
+    for(int i =0; i<10;i++){
+        for(int j=i+1;j<sizeof(gcc.adjVector[i]);j++){
+            values.push_back(gcc.Djikstras(i,j));
         }
     }
-    for(int i = 0;i<scores.size();i++){
-        scores[i] = scores[i]*-1
-    } //here we take the negative of every score, we need to find a good method of knowing what 2 nodes we took the shortest path from to get the weight at each index, because we have to sort this vector
+    for(int i = 0;i<values.size();i++){
+        values[i] = values[i]*-1;
 
+    } //here we take the negative of every score, we need to find a good method of knowing what 2 nodes we took the shortest path from to get the weight at each index, because we have to sort this vector
 
     return 0;
 }

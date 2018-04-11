@@ -159,6 +159,7 @@ int DirectedWeightedGraph::Djikstras(int src, int dest){
             current = current->next;
         }
     }
+ return -1; 
 }
 int DirectedWeightedGraph::LayerDeterminant(int parent[],int vertex, int dest){
     layer = 0;
