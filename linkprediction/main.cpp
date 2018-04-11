@@ -22,18 +22,31 @@ int main() {
   
  
     DirectedWeightedGraph gcc = graph.GCC();
+    vector<int> *scores;
+    scores = new vector<int>[10];
     gcc.print();
     cout<<endl; 
     vector<int> values;    
-    for(int i =0; i<10;i++){
-        for(int j=i+1;j<sizeof(gcc.adjVector[i]);j++){
+    for(int i =0; i<gcc.V;i++){
+        for(int j=i+1;j<gcc.V;j++){
             values.push_back(gcc.Djikstras(i,j));
+            scores[i].push_back(gcc.Djikstras(i,j));
         }
     }
     for(int i = 0;i<values.size();i++){
         values[i] = values[i]*-1;
-
     } //here we take the negative of every score, we need to find a good method of knowing what 2 nodes we took the shortest path from to get the weight at each index, because we have to sort this vector
-
+    
+//    for(int i =0; i<values.size();i++){
+//        cout<<values[i]<<" : ";
+//    }
+    for(int i =0; i<10;i++){
+        for(int j=i+1;j<10;j++){
+            cout<<scores[i][j]<<" : ";
+        }
+    }
+            
+    
+    
     return 0;
 }
