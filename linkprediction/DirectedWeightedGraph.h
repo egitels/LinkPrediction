@@ -13,6 +13,7 @@ using namespace std;
 class DirectedWeightedGraph {// graph is an adjlist representation. we want a vector of linkedlists.
 public:
     int V;
+    int layer = 0;
     DirectedWeightedGraph(int V);
     void addEdge(int src, int dest, int destWeight);
     string to_string();
@@ -22,7 +23,7 @@ public:
      * and then return the largest connected components*/
     DirectedWeightedGraph GCC() const;
     int Djikstras(int src, int dest);
-    int LayerDeterminant(vector<int> parent,int vertex, int dest);
+    int LayerDeterminant(int parent[],int vertex, int dest);
     vector<int> BFS(int src) const;
 
     void print() const;    

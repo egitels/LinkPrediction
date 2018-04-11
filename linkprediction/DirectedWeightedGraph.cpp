@@ -130,8 +130,13 @@ vector<int> DirectedWeightedGraph::BFS(int src) const{
     return found;
 }
 int DirectedWeightedGraph::Djikstras(int src, int dest){
-    vector<bool> discovered(adjVector.size(),false);
-    vector<int> parent(adjVector.size(),-1);
+    bool *discovered = new bool[V*2];
+    int *parent = new int[V*2];
+    for (int i = 0; i < 2*V; i++)
+    {
+        discovered[i] = false;
+        parent[i] = -1;
+    }
     discovered[src] = true;
     
     list<int> queue;
@@ -154,10 +159,9 @@ int DirectedWeightedGraph::Djikstras(int src, int dest){
             current = current->next;
         }
     }
-    return -1;
 }
-int DirectedWeightedGraph::LayerDeterminant(vector<int> parent,int vertex, int dest){
-    int layer = 0;
+int DirectedWeightedGraph::LayerDeterminant(int parent[],int vertex, int dest){
+    layer = 0;
     if(parent[vertex] == -1){
         return layer;
     }
