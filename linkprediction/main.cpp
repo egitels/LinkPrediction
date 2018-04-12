@@ -4,7 +4,19 @@
 #include <vector>
 
 using namespace std;
-
+struct pairs{
+    int x;
+    int y;
+    int pathlength;
+    struct pairs* next;
+};
+struct pairs* newPairs(int xnode, int ynode, int pathlengths){
+    struct pairs* newPairs = (struct pairs*)malloc(sizeof(struct pairs*));
+    newPairs->x = xnode;
+    newPairs->y = ynode;
+    newPairs->pathlength = pathlengths;
+    return newPairs;
+};
 
 int main() {
     int v = 10;
@@ -20,29 +32,23 @@ int main() {
     graph.addEdge(6, 7, 1);
 //    graph.print();
   
- 
+     
     DirectedWeightedGraph gcc = graph.GCC();
-    vector<int> *scores;
-    scores = new vector<int>[10];
+    vector<pairs> predictions;
+
+
     gcc.print();
     cout<<endl; 
-    vector<int> values;    
     for(int i =0; i<gcc.V;i++){
         for(int j=i+1;j<gcc.V;j++){
-            values.push_back(gcc.Djikstras(i,j));
-            scores[i].push_back(gcc.Djikstras(i,j));
+            pairs* individual = newPairs(i,j,gcc.Djikstras(i,j)*-1);
+            predictions.push_back(*individual);
         }
     }
-    for(int i = 0;i<values.size();i++){
-        values[i] = values[i]*-1;
-    } //here we take the negative of every score, we need to find a good method of knowing what 2 nodes we took the shortest path from to get the weight at each index, because we have to sort this vector
     
-//    for(int i =0; i<values.size();i++){
-//        cout<<values[i]<<" : ";
-//    }
-    for(int i =0; i<10;i++){
-        for(int j=i+1;j<10;j++){
-            cout<<scores[i][j]<<" : ";
+    for(int i =0; i<gcc.V;i++){
+        for(int j=i+1;j<gcc.V;j++){
+            cout<<predictions[i].pathlength<<" : ";
         }
     }
             

@@ -78,7 +78,6 @@ DirectedWeightedGraph DirectedWeightedGraph::GCC() const{
         }
         components.push_back(nextComponent);
  
-        nextNode = -1;
         for (int i = 0; i < V; ++i){
             if (!visited[i]){
                 nextNode = i;
@@ -104,6 +103,7 @@ DirectedWeightedGraph DirectedWeightedGraph::GCC() const{
 }*/
 
 //breadth-first search on the graph.
+
 vector<int> DirectedWeightedGraph::BFS(int src) const{
     vector<int> found;
     vector<bool> discovered(adjVector.size(), false); 
