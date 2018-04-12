@@ -46,10 +46,8 @@ int main() {
         }
     }
     
-    for(int i =0; i<gcc.V;i++){
-        for(int j=i+1;j<gcc.V;j++){
-            cout<<predictions[i].pathlength<<" : ";
-        }
+    for(int i =0; i<sizeof(predictions);i++){
+        cout<<"for path "<<predictions[i].x<<"->"<<predictions[i].y<<" the shortest path is length: "<<predictions[i].pathlength<<endl;
     }
             
     
