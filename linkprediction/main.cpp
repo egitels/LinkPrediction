@@ -19,7 +19,7 @@ struct pairs* newPairs(int xnode, int ynode, int pathlengths){
 };
 
 int main() {
-    int v = 10;
+    int v = 7;
     DirectedWeightedGraph graph(v);
     
     graph.addEdge(0, 1, 1);
@@ -27,9 +27,7 @@ int main() {
     graph.addEdge(0, 2, 1);
     graph.addEdge(2, 3, 1);
     graph.addEdge(3, 4, 1);
-    graph.addEdge(5, 4, 1);
     graph.addEdge(4, 6, 1);
-    graph.addEdge(6, 7, 1);
 //    graph.print();
   
      
