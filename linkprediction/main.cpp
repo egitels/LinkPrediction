@@ -59,6 +59,7 @@ int main() {
         num1 = gcc.random();
     }
     cout<<"random link from node: "<<num1<<"->"<<num2<<endl;
+//random method end
 //graph distance method start
     vector<pairs> gdPredictions;
     for(int i =0; i<gcc.V;i++){
