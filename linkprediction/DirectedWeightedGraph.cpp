@@ -24,6 +24,7 @@ void DirectedWeightedGraph::addEdge(int src, int dest, int destWeight){
     }
      
     adjVector[src].add(dest, destWeight);
+    adjVector[dest].add(src, destWeight);
 }
 //finds the GCC of a graph, directed or undirected.
 DirectedWeightedGraph DirectedWeightedGraph::GCC() const{
@@ -38,13 +39,7 @@ DirectedWeightedGraph DirectedWeightedGraph::GCC() const{
         }
     }
     
-//    for (int i : maxComponent){
-//        if (i > biggestNode){
-//            biggestNode = i;
-//        }
-//    } // switched this into the loop above because if you ran BFS on 0 and it was the original node (with current graph in main) you'd get 4 as your biggest node not 0.
-    DirectedWeightedGraph subGraph(V+1); //this was biggestnode+1 which for the current graph is 0+1 so needs to be max component vector size
-    
+ DirectedWeightedGraph subGraph(V+1);    
     for (int i = 0; i < subGraph.V; ++i){
  
         
