@@ -10,17 +10,14 @@ using namespace std;
 /**
  * Undirected Graph data structure, implemented using a map of vectors.
  */
+template <class T>
 class UndirectedUnweightedGraph {
     public:
-        /**
-         * UndirectedUnweightedGraph constructor.
-         */
-        UndirectedUnweightedGraph();
 
         /**
          * Undefined.
          */
-        void addNode(string node);
+        void addNode(T node);
 
         /**
          * Add an edge to the graph, between two nodes.
@@ -29,7 +26,7 @@ class UndirectedUnweightedGraph {
          * @param node1 First node to add an edge to
          * @param node2 Second node to add an edge to
          */
-        void addEdge(string node1, string node2);
+        void addEdge(T node1, T node2);
         
         /**
          * Check to see if an edge exists between two nodes.
@@ -40,7 +37,7 @@ class UndirectedUnweightedGraph {
          * return true if an edge exists between
          *  the two nodes, false otherwise.
          */
-        bool edgeExists(string node1, string node2);
+        bool edgeExists(T node1, T node2);
         
         /**
          * Return the number of nodes contained by the graph.
@@ -55,7 +52,46 @@ class UndirectedUnweightedGraph {
         void testComp();
         
     private:
-        map<string, vector<string> > adjList;
+        map<T, vector<T> > adjList;
 };
+
+template <class T>
+void UndirectedUnweightedGraph<T>::addNode(T node){
+    adjList[node] = vector<T>();
+}
+
+template <class T>
+void UndirectedUnweightedGraph<T>::addEdge(T node1, T node2){
+    adjList[node1].push_back(node2);
+    adjList[node2].push_back(node1);
+}
+
+template <class T>
+bool UndirectedUnweightedGraph<T>::edgeExists(T node1, T node2){
+    for (T node : adjList[node1]){
+        if (node == node2){
+            return true;
+        }
+    }
+    return false;
+}
+
+template <class T>
+int UndirectedUnweightedGraph<T>::getSize() const{
+    return adjList.size();
+}
+
+template <class T>
+string UndirectedUnweightedGraph<T>::toString(){
+    T out = "";
+    for (auto it = adjList.begin(); it != adjList.end(); ++it){
+       out += it->first + ": ";
+       for (T n : it->second){
+           out += n + " ";
+       }
+       out += "\n";
+    }
+    return out;
+}
 
 #endif

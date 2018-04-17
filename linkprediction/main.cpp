@@ -1,7 +1,7 @@
 #include "UndirectedUnweightedGraph.h"
 #include <iostream>
 int main(){
-    UndirectedUnweightedGraph graph;
+    UndirectedUnweightedGraph<string> graph;
     graph.addNode("Adam");
     graph.addNode("Eli");
     graph.addNode("Dan");
