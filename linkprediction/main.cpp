@@ -14,5 +14,6 @@ int main(){
     graph.addEdge("Dan", "John");
 
     std::cout << graph.toString() << std::endl;
+    std::cout<< graph.getSize() << std::endl;
     return 0;
 }
