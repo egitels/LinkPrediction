@@ -1,3 +1,4 @@
 linkprediction.xcodeproj
 Build/
 Index/
+*.swp
