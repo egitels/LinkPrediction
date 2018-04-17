@@ -25,6 +25,10 @@ public:
     int Djikstras(int src, int dest);
     int LayerDeterminant(int parent[],int vertex, int dest);
     vector<int> BFS(int src) const;
+    int CommonNeighbors(int src, int dest);
+    int random();
+    
+    
 
     void print() const;    
 };

@@ -1,6 +1,7 @@
 #include "DirectedWeightedGraph.h"
 #include "LinkedList.h"
 #include <list>
+#include <time.h>
 
 //creates a Directed graph with number of nodes(vertexes) V, graph is a vector of linkedlists
 DirectedWeightedGraph::DirectedWeightedGraph(int V){
@@ -57,53 +58,6 @@ DirectedWeightedGraph DirectedWeightedGraph::GCC() const{
     return subGraph;
 
 }
-
-
-/*vector<int> DirectedWeightedGraph::GCC() const{
-    vector<bool> visited(V, false);
-    vector< vector<int>> components; 
-    
-    int nextNode = 0;
-    bool allFound = false;
-
-    while (!allFound){
-
-        vector<bool> nextVisited = BFS(nextNode);
-        vector<int> nextComponent;
-        for (size_t index = 0; index < visited.size(); ++index){
-            if (nextVisited[index]){
-                visited[index] = true;
-                nextComponent.push_back(index);
-            }
-        }
-        components.push_back(nextComponent);
- 
-        for (int i = 0; i < V; ++i){
-            if (!visited[i]){
-                nextNode = i;
-                break;
-            }
-        }
-        
-        if (nextNode == -1){
-            allFound = true;
-        }
-    }
-    
-    int best_index = -1;
-    size_t max_size = 0;
-    for (size_t i = 0; i < components.size(); ++i){
-        if (components[i].size() > max_size){
-            max_size = components[i].size();
-            best_index = i;
-        }
-    }
-    return components[best_index];
- 
-}*/
-
-//breadth-first search on the graph.
-
 vector<int> DirectedWeightedGraph::BFS(int src) const{
     vector<int> found;
     vector<bool> discovered(adjVector.size(), false); 
@@ -170,6 +124,42 @@ int DirectedWeightedGraph::LayerDeterminant(int parent[],int vertex, int dest){
     layer++;
 
     return layer;
+}
+
+int DirectedWeightedGraph::CommonNeighbors(int src, int dest){
+    vector<int> srcNeighbors;
+    vector<int> destNeighbors;
+    vector<int> neighbors;
+    LinkedList::node* srcCurrent;
+    LinkedList::node* destCurrent;
+    srcCurrent = adjVector[src].getHead();
+    while(srcCurrent != NULL){
+        srcNeighbors.push_back(srcCurrent->data);
+        srcCurrent = srcCurrent->next;
+    }
+    destCurrent = adjVector[dest].getHead();
+    while(destCurrent != NULL){
+        destNeighbors.push_back(destCurrent->data);
+        destCurrent = destCurrent->next;
+    }
+    for(int i = 0; i<srcNeighbors.size();i++){
+        for(int j = 0; j < destNeighbors.size();j++){
+            if(srcNeighbors[i] == destNeighbors[j]){
+                neighbors.push_back(srcNeighbors[i]);
+            }
+        }
+    }
+    return neighbors.size(); 
+    
+}
+int DirectedWeightedGraph::random(){
+    int random;
+    srand (time(NULL));
+    random = rand()%V+1;
+    
+    return random;
+    
+    
 }
 
 //print function
