@@ -2,9 +2,12 @@
 #define UndirectedUnweightedGraph_h
 
 
+#include <iostream>
 #include <string>
 #include <vector>
 #include <map>
+#include <list>
+#include <algorithm>
 
 using namespace std;
 /**
@@ -43,6 +46,14 @@ class UndirectedUnweightedGraph {
          * Return the number of nodes contained by the graph.
          */
         int getSize() const;
+        
+        map<T, vector<T>> getAdjList() const;
+
+        vector<T> BFS(T src);
+        
+        map<T, int> shortestPath(T src);
+
+        vector<T> commonNeighbors(T node1, T node2);
 
         /**
          * Return a string representation of the graph.
@@ -53,15 +64,27 @@ class UndirectedUnweightedGraph {
         
     private:
         map<T, vector<T> > adjList;
+
 };
 
 template <class T>
-void UndirectedUnweightedGraph<T>::addNode(T node){
+void UndirectedUnweightedGraph<T>::addNode(T node){ 
+    if (adjList.count(node)){
+        //throw some kind of error
+    } 
+
     adjList[node] = vector<T>();
 }
 
 template <class T>
 void UndirectedUnweightedGraph<T>::addEdge(T node1, T node2){
+    if (!adjList.count(node1)){
+        addNode(node1);
+    } 
+    if (!adjList.count(node2)){
+        addNode(node2);
+    }
+
     adjList[node1].push_back(node2);
     adjList[node2].push_back(node1);
 }
@@ -79,6 +102,69 @@ bool UndirectedUnweightedGraph<T>::edgeExists(T node1, T node2){
 template <class T>
 int UndirectedUnweightedGraph<T>::getSize() const{
     return adjList.size();
+}
+
+template <class T>
+map<T, vector<T> > UndirectedUnweightedGraph<T>::getAdjList() const{
+    return adjList;
+}
+
+template <class T>
+vector<T> UndirectedUnweightedGraph<T>::BFS(T src) {
+    vector<T> found;
+    
+    map <T, bool> discovered;
+    discovered[src] = true;
+
+    list<T> queue;
+    queue.push_back(src);
+    while (!queue.empty()){
+        T vertex = queue.front();
+        queue.pop_front();
+        
+        for (T current : adjList[vertex]){
+            if (!discovered[current]){
+                queue.push_back(current);
+                discovered[current] = true;
+                found.push_back(current);
+            }
+        }
+    }
+    return found;
+}
+
+template <class T>
+map<T, int> UndirectedUnweightedGraph<T>::shortestPath(T src) {
+    map <T, bool> discovered;
+    map <T, int> dist;
+    discovered[src] = true;
+    dist[src] = 0;
+    list<T> queue;
+    queue.push_back(src);
+    while (!queue.empty()){
+        T vertex = queue.front();
+        queue.pop_front();
+        
+        for (T current : adjList[vertex]){
+            if (!discovered[current] && current != src){
+                queue.push_back(current);
+                discovered[current] = true;
+                dist[current] = dist[vertex] + 1;
+            }
+        }
+    }
+    return dist;
+}
+
+//doesn't appear to work yet...
+template <class T>
+vector<T> UndirectedUnweightedGraph<T>::commonNeighbors(T node1, T node2){
+    vector<T> n1Neighbors = adjList[node1];
+    vector<T> n2Neighbors = adjList[node2];
+    vector<T> intersection;
+    set_intersection(n1Neighbors.begin(), n1Neighbors.end(), n2Neighbors.begin(),
+            n2Neighbors.end(), inserter(intersection, intersection.begin()));
+    return intersection;
 }
 
 template <class T>
