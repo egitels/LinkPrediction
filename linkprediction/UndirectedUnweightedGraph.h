@@ -10,22 +10,24 @@
 #include <algorithm>
 
 using namespace std;
+
 /**
  * Undirected Graph data structure, implemented using a map of vectors.
+ * This class is generic, and will support nodes of any data type.
  */
 template <class T>
 class UndirectedUnweightedGraph {
     public:
 
         /**
-         * Undefined.
+         * Add a node to the graph.
+         * Initializes empty vector for the node key in the adjacency list.
+         * @param node The node to add to the graph.
          */
         void addNode(T node);
 
         /**
          * Add an edge to the graph, between two nodes.
-         * If either node is out of bounds of the graph, this method will throw an
-         * out_of_range exception.
          * @param node1 First node to add an edge to
          * @param node2 Second node to add an edge to
          */
@@ -33,8 +35,6 @@ class UndirectedUnweightedGraph {
         
         /**
          * Check to see if an edge exists between two nodes.
-         * If either node is out of bounds of the graph, this method will throw an
-         * out_of_range exception.
          * @param node1 First node to check if edge exists
          * @param node2 Second node to check if edge exists
          * return true if an edge exists between
@@ -47,12 +47,46 @@ class UndirectedUnweightedGraph {
          */
         int getSize() const;
         
+        /**
+         * Return the adjacency list data structure that represents this graph.
+         */
         map<T, vector<T>> getAdjList() const;
+        
+        /**
+         * Return the greatest connected component of the graph.
+         */
+        UndirectedUnweightedGraph<T> GCC();
 
+        /**
+         * Return all of the connected components in the graph.
+         */
+        vector<vector<T> > getAllComponents();
+
+        /**
+         * Run a breadth-first search on tue graph, starting at some source node.
+         * @param src The source node
+         * return all nodes found from the search as vector
+         */
         vector<T> BFS(T src);
         
-        map<T, int> shortestPath(T src);
+        /**
+         * Get the shortest paths between some source node and every other
+         * node it is connected to.
+         * @param src The source node
+         * return the shortest paths represented as a map, with the value of each
+         *  (key, value) pair of the map representing the distance between that node key
+         *  and the source node.
+         */
+        map<T, int> shortestPaths(T src);
 
+        /**
+         * Get the common neighbors that node1 and node2 share.
+         * Invariant: the nodes should be seperated by a path length of exactly 2,
+         * otherwise calling this method does not make sense.
+         * @param node1 The first node
+         * @param node2 The second node
+         * return a vector containing the intersection of neighbors between node1 and node2
+         */
         vector<T> commonNeighbors(T node1, T node2);
 
         /**
@@ -60,19 +94,24 @@ class UndirectedUnweightedGraph {
          */
         std::string toString();
 
-        void testComp();
-        
     private:
         map<T, vector<T> > adjList;
+        
+        /*
+         * Given a vector of nodes that are a subset of the original graph,
+         * create a subgraph containing only those nodes.
+         * @param nodes The vector containing subset of nodes of original graph
+         * return A subgraph consisting of only those nodes passed in
+         */
+        UndirectedUnweightedGraph<T> reconstructSubGraph(vector<T> nodes);
 
 };
 
 template <class T>
 void UndirectedUnweightedGraph<T>::addNode(T node){ 
     if (adjList.count(node)){
-        //throw some kind of error
+        throw std::logic_error("Node \"" + node + "\" already exists");
     } 
-
     adjList[node] = vector<T>();
 }
 
@@ -83,6 +122,11 @@ void UndirectedUnweightedGraph<T>::addEdge(T node1, T node2){
     } 
     if (!adjList.count(node2)){
         addNode(node2);
+    }
+
+    if (edgeExists(node1, node2)){
+        throw std::logic_error("Edge already exists between nodes \"" + 
+                node1 + "\" and \"" + node2 + "\"");
     }
 
     adjList[node1].push_back(node2);
@@ -110,11 +154,55 @@ map<T, vector<T> > UndirectedUnweightedGraph<T>::getAdjList() const{
 }
 
 template <class T>
+UndirectedUnweightedGraph<T> UndirectedUnweightedGraph<T>::GCC() {
+    vector<vector<T> > allComponents = getAllComponents(); 
+    vector<T> maxComponent;
+    for (vector<T> component: allComponents){
+        if (component.size() > maxComponent.size()){
+            maxComponent = component;
+        }
+    }
+    return reconstructSubGraph(maxComponent);
+}
+
+template <class T>
+vector<vector<T> > UndirectedUnweightedGraph<T>::getAllComponents() {
+    map<T, bool> visited;
+    
+    for (auto it = adjList.begin(); it != adjList.end(); ++it){
+        visited[it->first] = false;
+    }
+    vector<vector<T >> allComponents;
+    int foundCount = 0; 
+    
+    while (foundCount < adjList.size()){
+        
+        T current;
+        for (auto it = visited.begin(); it != visited.end(); ++it){
+            if (it->second == false){
+                current = it->first;
+                break;
+            }
+        }
+
+        vector<T> found = BFS(current);
+        allComponents.push_back(found);
+        foundCount += found.size();
+        for (T node : found){
+            visited[node] = true;
+        }
+    }
+    return allComponents;
+}
+
+//done
+template <class T>
 vector<T> UndirectedUnweightedGraph<T>::BFS(T src) {
     vector<T> found;
     
     map <T, bool> discovered;
     discovered[src] = true;
+    found.push_back(src);
 
     list<T> queue;
     queue.push_back(src);
@@ -133,8 +221,9 @@ vector<T> UndirectedUnweightedGraph<T>::BFS(T src) {
     return found;
 }
 
+//done
 template <class T>
-map<T, int> UndirectedUnweightedGraph<T>::shortestPath(T src) {
+map<T, int> UndirectedUnweightedGraph<T>::shortestPaths(T src) {
     map <T, bool> discovered;
     map <T, int> dist;
     discovered[src] = true;
@@ -156,11 +245,12 @@ map<T, int> UndirectedUnweightedGraph<T>::shortestPath(T src) {
     return dist;
 }
 
-//doesn't appear to work yet...
 template <class T>
 vector<T> UndirectedUnweightedGraph<T>::commonNeighbors(T node1, T node2){
     vector<T> n1Neighbors = adjList[node1];
     vector<T> n2Neighbors = adjList[node2];
+    sort(n1Neighbors.begin(), n1Neighbors.end());
+    sort(n2Neighbors.begin(), n2Neighbors.end());
     vector<T> intersection;
     set_intersection(n1Neighbors.begin(), n1Neighbors.end(), n2Neighbors.begin(),
             n2Neighbors.end(), inserter(intersection, intersection.begin()));
@@ -178,6 +268,19 @@ string UndirectedUnweightedGraph<T>::toString(){
        out += "\n";
     }
     return out;
+}
+
+template <class T>
+UndirectedUnweightedGraph<T> UndirectedUnweightedGraph<T>::reconstructSubGraph(vector<T> nodes){
+    UndirectedUnweightedGraph<T> gcc;
+    for (T node : nodes){
+        for (T neighbor : adjList[node]){
+            if (!gcc.edgeExists(node, neighbor)){
+                gcc.addEdge(node, neighbor);
+            }
+        }
+    }
+    return gcc;
 }
 
 #endif
