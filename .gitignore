@@ -3,3 +3,6 @@ Build/
 Index/
 *.swp
 runGraph
+runGraph_new
+runGraph_old
+__pycache__

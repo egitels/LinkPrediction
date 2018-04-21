@@ -1,6 +1,6 @@
 import os
 
-FILTERS = ['et al', 'latex', 'request', 'uuencoded', 'file']
+FILTERS = ['et al', 'latex', 'request', 'uuencoded', 'file', 'GERMANY']
 EXTRA = ['and', 'by']
 
 def __confirm_directory_structure(out_file):
@@ -115,9 +115,7 @@ def __remove_extra_words(author):
 
     for word in EXTRA:
         if word in author:
-            author = author.replace(word, '')
-            if author.startswith(' '):
-                author = author[1:]
+            author = author.replace(word + ' ', '')
     return author
 
 def __format_authors(line):
@@ -132,7 +130,7 @@ def __format_authors(line):
     authors_out = [__abbreviate(__remove_extra_words(author)) for author in authors if not __filter_out(author)]
     return authors_out
 
-def __create_edges(authors):
+def __create_edges(authors, log=True):
     """
     Given a list of authors who collaborated together on a single paper,
     return a list of tuples that represent edges between all authors.
@@ -147,7 +145,7 @@ def __create_edges(authors):
         for j in range(i+1, len(authors)):
             if authors[i] != authors[j]:
                 pairs.append((authors[i], authors[j]))
-            else:
+            elif log:
                 print('Duplicate: {}'.format(authors[i]))
     return pairs
 
@@ -176,13 +174,13 @@ def extract_authors_for_testing(papers_file):
                 if marker == 0:
                     authors = __format_authors(line)
                     all_authors.append(authors) 
-                    edges = __create_edges(authors)
+                    edges = __create_edges(authors, log=False)
                     for edge in edges:
-                        author_edges.append(edges)
+                        author_edges.append([edge[0], edge[1]])
                 marker-=1
             elif __is_new_paper(line):
                 marker = 1
-        return all_authors, author_edges
+        return author_edges
 
 def convert_to_edgelist_file(papers_file, out_file):
     """
