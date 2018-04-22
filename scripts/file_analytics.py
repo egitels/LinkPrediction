@@ -1,15 +1,20 @@
-from file_conversion import extract_authors_for_testing 
-
 class EdgeCorrector:
 
     def __init__(self, edge_list):
         self.edge_list = edge_list
         self.counts = self.__count_authors()
-  
-    def get_anomalies(self): 
+
+    def get_suspicious_data(self): 
         return {"last_name_only" : [key for key in self.counts if len(key.split('.')) == 1],
-                "first_char_lower" : [key for key in self.counts if key[0].islower()], 
+                "first_char_lower" : [key for key in self.counts if key[0].islower()],  
+                "last_char_lower" : [key for key in self.counts if len(key.split('.')) > 1 
+                    and len(key.split('.')[1]) > 0 and key.split('.')[1][0].islower()], 
                 "all_upper" : [key for key in self.counts if key.isupper()]}
+    
+    
+    def get_counts(self):
+        return sorted(self.counts.items(), key=lambda x:-x[1])
+
     def correct_edgelist(self, log=True):
         """
         Find all authors who are listed with only a last name within edgelist, and attempt to
@@ -17,20 +22,38 @@ class EdgeCorrector:
         edgelist.
         """
         
-        corrected, _ = self.__guess_full_names()
+        guessed_first_names, conflicts = self.__guess_full_names()
+        corrected_last_names = self.__fix_last_names()
+        corrected = {**guessed_first_names, **corrected_last_names}
+        
+        if log:
+            print("[correct_edgelist]: conflicts --> {}".format(conflicts))
+        
         for edge in self.edge_list:
             for i in range(len(edge)):
                 if edge[i] in corrected:
                     old_edge = edge[i] 
                     self.counts[old_edge] -= 1
                     edge[i] = corrected[edge[i]] 
-                    self.counts[edge[i]] += 1
+                    if edge[i] in self.counts:
+                        self.counts[edge[i]] += 1
+                    else:
+                        self.counts[edge[i]] = 1
                     if self.counts[old_edge] == 0:
                         del self.counts[old_edge]
                     if log:
-                        print("Changed {} to {}".format(old_edge, edge[i]))
+                        print("[correct_edgelist]: changed {} to {}".format(old_edge, edge[i]))
         return self.edge_list
     
+    def __fix_last_names(self):
+        keys = [key for key in self.counts if len(key.split('.')) > 1 
+                and len(key.split('.')[1]) > 0 and key.split('.')[1][0].islower()]
+        corrected = {}
+        for key in keys:
+            sp = key.split('.')
+            corrected[key] = sp[0] + '.' + sp[1][0].upper() + sp[1][1:]
+        return corrected
+
     def __guess_full_names(self): 
         """
         Authors are sometimes listed with only their last name.
@@ -77,12 +100,3 @@ class EdgeCorrector:
                     d[author]+=1
         return d
 
-def analyze_data():
-    edge_list = extract_authors_for_testing('data/as-ph/1994.txt')
-    corrector = EdgeCorrector(edge_list)
-    print(corrector.get_anomalies())
-    edge_list = corrector.correct_edgelist() 
-    print(corrector.get_anomalies())
-    
-
-analyze_data()

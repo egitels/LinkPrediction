@@ -1,6 +1,9 @@
+from file_analytics import EdgeCorrector
+
 import os
 
-FILTERS = ['et al', 'latex', 'request', 'uuencoded', 'file', 'GERMANY']
+SOFT_FILTERS = ['et al.', 'et al']
+FILTERS = ['IFCA', 'latex', 'request', 'uuencoded', 'file', 'GERMANY', 'collaboration', 'team']
 EXTRA = ['and', 'by']
 
 def __confirm_directory_structure(out_file):
@@ -62,22 +65,56 @@ def __abbreviate(author):
     """
     sp = author.split(' ')
     if len(sp) == 1:
+        if len(author.split('.')) > 2:
+            return author.split('.')[0][0] + '.' + author.split('.')[-1]
         return author
     ab = sp[0][0] + '.' + sp[-1]
     return ab
 
+def __deep_clean(author, log=True):
+    """
+    Although most authors are separated by comma, sometimes an author has extra information that needs to be
+    filtered out. Such information may include et al, for example. While we do not want to filter out the
+    author entirely, we want to remove this useless information.
+    Examples:
+    __deep_clean('Adam Barson et al.') -> 'Adam Barson'
+    __deep_celan('Hegra Collaboration: Adam Barson') -> 'Adam Barson'
+    """
 
-def __filter_out(author):
+    out = author
+    if ':' in author:
+        out = ''
+        sp = author.split(':')
+        for v in sp:
+            if not __filter_out(v, log=False):
+                if log:
+                    print('[__deep_clean]: salvaged {} from {}'.format(v, author))
+                out += v
+    for sf in SOFT_FILTERS:
+        if sf in out:
+            old = out
+            out = out.replace(sf, '')
+            if out != '':
+                print('[__deep_clean]: cleaning', old, '->', out)
+    return out.strip()
+
+def __filter_out(author, log=True):
     """
     Filter out information that probably is not any author.
     Filtered out fake 'authors' include strings with numbers within them,
     and any strings that contain values featured in the FILTERS list.
     """
-
+    
+    if author == '':
+        return True
     for f in FILTERS:
-        if f in author:
+        if f.lower() in author.lower():
+            if log:
+                print('[__filter_out]: filtered', author)
             return True
-    if any(char.isdigit() for char in author):
+    if any(char.isdigit() for char in author):    
+        if log:
+            print('[__filter_out]: filtered', author)
         return True
     return False
 
@@ -88,7 +125,7 @@ def __clean(line):
     This method eliminates all information contained within (), even in the case
     of embedded parenthesis, using stack-like logic.
     """
-
+    old = line
     while '(' in line:
         l_index = -1
         r_index = -1
@@ -105,6 +142,8 @@ def __clean(line):
                     r_index = i
                     line = line[:l_index-1] + line[r_index+1:]
                     break
+    if line == '':
+        print(line)
     return line          
 
 def __remove_extra_words(author):
@@ -112,13 +151,12 @@ def __remove_extra_words(author):
     Author lines sometimes feature extra words, like 'and', or 'by'.
     This method will safely remove these words.
     """
-
     for word in EXTRA:
-        if word in author:
+        if word in author.split(' '):
             author = author.replace(word + ' ', '')
     return author
 
-def __format_authors(line):
+def __format_authors(line, log=True):
     """
     The following method uses all of the utility format methods defined above.
     Author lines are cleaned of any unneccessary information, and returned
@@ -127,7 +165,8 @@ def __format_authors(line):
     
     line = __clean(line)
     authors = line.split(', ')
-    authors_out = [__abbreviate(__remove_extra_words(author)) for author in authors if not __filter_out(author)]
+    authors = [__deep_clean(author, log=log) for author in authors]
+    authors_out = [__abbreviate(__remove_extra_words(author)) for author in authors if not __filter_out(author, log=log)]
     return authors_out
 
 def __create_edges(authors, log=True):
@@ -146,10 +185,10 @@ def __create_edges(authors, log=True):
             if authors[i] != authors[j]:
                 pairs.append((authors[i], authors[j]))
             elif log:
-                print('Duplicate: {}'.format(authors[i]))
+                print('[__create_edges]: found duplicate: {}'.format(authors[i]))
     return pairs
 
-def extract_authors_for_testing(papers_file):
+def extract_authors(papers_file, log=True):
     """
     This method can be called when only the python data structures created from the file
     conversion are needed. No output files will be created by calling this file.
@@ -172,9 +211,9 @@ def extract_authors_for_testing(papers_file):
             line = line.rstrip()
             if marker != -1:
                 if marker == 0:
-                    authors = __format_authors(line)
+                    authors = __format_authors(line, log=log)
                     all_authors.append(authors) 
-                    edges = __create_edges(authors, log=False)
+                    edges = __create_edges(authors, log=log)
                     for edge in edges:
                         author_edges.append([edge[0], edge[1]])
                 marker-=1
@@ -182,7 +221,7 @@ def extract_authors_for_testing(papers_file):
                 marker = 1
         return author_edges
 
-def convert_to_edgelist_file(papers_file, out_file):
+def convert_to_edgelist_file(papers_file, out_file, log=True):
     """
     Given an input file that consists of a list of paper information pulled from https://arxiv.org,
     this method will extract all of the authors who co-wrote papers together and put them together into an edge list.
@@ -192,31 +231,23 @@ def convert_to_edgelist_file(papers_file, out_file):
     params:
         papers_file : the input text file to be parsed
         out_file : the path to write the edge list to
-    return
-        -> nothing?
     """
-
-    if not os.path.exists(papers_file):
-        raise FileNotFoundError("{} does not exist".format(papers_file))
+    
+    author_edges = extract_authors(papers_file)
     __confirm_directory_structure(out_file)
-    i = 1
-    with open(papers_file, 'r') as papers, open(out_file, 'w') as out:
-        all_papers = []
-        author_edges = []
-        marker = -1
-        for line in papers:
-            line = line.rstrip()
-            if marker != -1:
-                if marker == 0:
-                    authors = __format_authors(line)
-                    author_edges.append(authors)
-                    edges = __create_edges(authors)
-                    for edge in edges:
-                        out.write(edge[0] + ' ' + edge[1] + '\n')
-                    #print(i, authors)
-                    i+=1
-                marker-=1
-            elif __is_new_paper(line):
-                all_papers.append(int(line[1:line.find(']')]))
-                marker = 1
-        __has_all_papers(all_papers)
+    edgeCorrector = EdgeCorrector(author_edges)
+    author_edges = edgeCorrector.correct_edgelist(log=log)
+    counts = edgeCorrector.get_counts() 
+    if log:
+        print('--Suspicious Data--')
+        print(edgeCorrector.get_suspicious_data())
+
+    with open(out_file, 'w') as out:
+        for edge in author_edges:
+            out.write(edge[0] + ' ' + edge[1] + '\n')
+
+    out_log = out_file.split('.')[0] + '.log'
+    with open(out_log, 'w') as log:
+        for key, val in counts:
+            log.write(key + ': ' + str(val) + '\n')
+

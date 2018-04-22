@@ -25,4 +25,4 @@ def get_args():
 
 if __name__ == "__main__":
     papers_file, out_file = get_args()
-    convert_to_edgelist_file(papers_file, out_file)
+    convert_to_edgelist_file(papers_file, out_file, log=True)
