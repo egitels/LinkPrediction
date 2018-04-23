@@ -93,7 +93,35 @@ class UndirectedUnweightedGraph {
          * Return a string representation of the graph.
          */
         std::string toString();
+        
+        /**
+        *
+        *returns the score of the intersection of the neighbors of node1 and node2 divded by the union of the neghbors of node1
+        * and node 2.
+        */
+        int Jaccard(T node1, T node2);
 
+        /*
+        *The jaccard * 1/the frequency of similar nodes
+        */
+
+        int adamicAdar(T node1, T node2);
+        
+        /*
+        *The product of the number of neighbors of x and y
+        */
+        int preferentialAttachment(T node1, T node2);
+       /*
+        *The sum of the ensemble of all paths from x to y
+        */
+        int Katz(T node1, T node2);
+        /* we reduce the size of the graph by 1-p where p is the number of pairs with the lowest score found from katz, then we
+        * rerun katz to find scores
+        */
+        int katzClustering(T node1, T node2);
+        /*returns score based on the intersection of the neighbors of nodes similar to x and the neighbors of y
+        */
+        int Bigram(T node1, T node2);
     private:
         map<T, vector<T> > adjList;
         
