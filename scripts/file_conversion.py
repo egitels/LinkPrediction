@@ -3,7 +3,8 @@ from file_analytics import EdgeCorrector
 import os
 
 SOFT_FILTERS = ['et al.', 'et al']
-FILTERS = ['IFCA', 'latex', 'request', 'uuencoded', 'file', 'GERMANY', 'collaboration', 'team']
+FILTERS = ['MACHO', 'STScI', 'Budapest', 'Hungary', 'Cosmology', 'UK', 'Italy', 'SISSA/ISAS', 
+        'Caltech', 'Consortium', 'Project', 'IFCA', 'latex', 'request', 'uuencoded', 'file', 'GERMANY', 'collaboration', 'team']
 EXTRA = ['and', 'by']
 
 def __confirm_directory_structure(out_file):
@@ -108,9 +109,9 @@ def __filter_out(author, log=True):
     if author == '':
         return True
     for f in FILTERS:
-        if f.lower() in author.lower():
+        if f.lower() in author.lower().split():
             if log:
-                print('[__filter_out]: filtered', author)
+                print('[__filter_out]: filtered', author, 'with filter', f.lower())
             return True
     if any(char.isdigit() for char in author):    
         if log:
