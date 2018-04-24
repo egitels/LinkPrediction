@@ -99,7 +99,7 @@ class UndirectedUnweightedGraph {
         *returns the score of the intersection of the neighbors of node1 and node2 divded by the union of the neghbors of node1
         * and node 2.
         */
-        int Jaccard(T node1, T node2);
+        double Jaccard(T node1, T node2);
 
         /*
         *The jaccard * 1/the frequency of similar nodes
@@ -283,6 +283,27 @@ vector<T> UndirectedUnweightedGraph<T>::commonNeighbors(T node1, T node2){
     set_intersection(n1Neighbors.begin(), n1Neighbors.end(), n2Neighbors.begin(),
             n2Neighbors.end(), inserter(intersection, intersection.begin()));
     return intersection;
+}
+
+template <class T>
+double UndirectedUnweightedGraph<T>::Jaccard(T node1, T node2){
+    vector<T> n1Neighbors = adjList[node1];
+    vector<T> n2Neighbors = adjList[node2];
+    sort(n1Neighbors.begin(), n1Neighbors.end());
+    sort(n2Neighbors.begin(), n2Neighbors.end());
+    vector<T> neighborUnion;
+    set_union(n1Neighbors.begin(), n1Neighbors.end(), n2Neighbors.begin(),
+            n2Neighbors.end(), inserter(neighborUnion, neighborUnion.begin()));
+    
+    double common = commonNeighbors(node1, node2).size();
+    double all = neighborUnion.size();
+
+    return common/all;
+}
+
+template <class T>
+int UndirectedUnweightedGraph<T>::preferentialAttachment(T node1, T node2){
+    return adjList[node1].size() * adjList[node2].size();
 }
 
 template <class T>

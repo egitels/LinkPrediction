@@ -23,3 +23,28 @@ vector<pair <T, T>> nodePairsWithDistance(UndirectedUnweightedGraph<T> graph, in
     }
     return lengthDPairs;
 }
+
+template <class T>
+pair<T, T> findLargestJaccard(UndirectedUnweightedGraph<T> graph){ 
+    pair <T, T> bigOlJaccardPair;
+    map<T, vector<T>> adjList = graph.getAdjList();
+    double biggestJaccard = 0;
+    for (auto it1 = adjList.begin(); it1 != adjList.end(); ++it1){
+        T vertex1 = it1->first;
+        for (auto it2 = adjList.begin(); it2 != adjList.end(); ++it2){
+            T vertex2 = it2->first;
+            if (vertex1 != vertex2 && !graph.edgeExists(vertex1, vertex2)){
+                double calculatedJaccard = graph.Jaccard(vertex1, vertex2);
+                if (calculatedJaccard > biggestJaccard){
+                    biggestJaccard = calculatedJaccard;
+                    bigOlJaccardPair = make_pair(vertex1, vertex2);
+                    cout << biggestJaccard << endl;
+                }
+                else if (calculatedJaccard == biggestJaccard){
+                    cout << vertex1 << calculatedJaccard << endl;
+                }
+            }   
+        }
+    }
+    return bigOlJaccardPair;
+}

@@ -42,7 +42,6 @@ void readGraphFromFile(UndirectedUnweightedGraph<string>& graph, string graph_fi
     }
 }
 
-
 int main(){
     string year1 = "edgelists/as-ph/1994.txt";
     string year2 = "edgelists/as-ph/1995.txt";
@@ -60,45 +59,49 @@ int main(){
     readGraphFromFile(graph2, year5);
     readGraphFromFile(graph2, year6);
     
+    graph1 = graph1.GCC();
+    pair<string, string> biggest = findLargestJaccard<string>(graph1);
+    cout << "Biggest " << biggest.first << " " << biggest.second << endl;
+    
     //cout << graph1.toString() << endl;
     //cout << graph2.toString() << endl;
-    cout << graph1.getSize() << endl;
-    cout << graph2.getSize() << endl; 
+    //cout << graph1.getSize() << endl;
+    //cout << graph2.getSize() << endl; 
     
-    // graph.addEdge("A", "B"); 
-   // graph.addEdge("A", "D");
-   // graph.addEdge("B", "D");
-   // graph.addEdge("C", "D");
-   // graph.addEdge("C", "E");
-   // graph.addEdge("C", "F");
-   // graph.addEdge("B", "C");
-   // graph.addEdge("B", "F");
-   // graph.addEdge("D", "G");
-   // 
-   // graph.addEdge("H", "I");
-   // graph.addEdge("J", "K");
-   // graph.addEdge("J", "H");
-   // graph.addEdge("Z", "Y");
-   // 
-   // cout << "Original graph:" << endl;
-   // cout << graph.toString() << endl;
-   // cout << "GCC of graph:" << endl;
-   // cout << graph.GCC().toString() << endl;
-   // 
-   // cout << "Pairs of nodes of distance 2:" << endl;
-   // vector<pair<string, string> > pairs = nodePairsWithDistance<string>(graph, 2);
-   // for (pair<string, string> pair : pairs){
-   //     cout << "{" << pair.first << " " << pair.second << "}" << " ";
-   // }
-   // cout << endl;
-   // 
-   // cout << "\nCommon neighbors between C and A:" << endl;
-   // vector<string> common = graph.commonNeighbors("C", "A");
-   // for (string node : common){
-   //     cout << node << " ";
-   // }
-   // cout << endl;
-    
+    //UndirectedUnweightedGraph<string> graph; 
+    //graph.addEdge("A", "B"); 
+    //graph.addEdge("A", "D");
+    //graph.addEdge("B", "D");
+    //graph.addEdge("C", "D");
+    //graph.addEdge("C", "E");
+    //graph.addEdge("C", "F");
+    //graph.addEdge("B", "C");
+    //graph.addEdge("B", "F");
+    //graph.addEdge("D", "G");
+    //
+    //graph.addEdge("D", "H");
+    //graph.addEdge("D", "J");
+    //graph.addEdge("D", "Z");
+    //graph.addEdge("H", "I");
+    //graph.addEdge("J", "K");
+    //graph.addEdge("J", "H");
+    //graph.addEdge("Z", "Y");
+    //
+    //graph.addEdge("app", "G");
+    //graph.addEdge("app", "J");
+    //graph.addEdge("app", "oh");
+    //graph.addEdge("app", "my");
+    //cout << "\nCommon neighbors between C and A:" << endl;
+    //vector<string> common = graph.commonNeighbors("C", "A");
+    //for (string node : common){
+    //    cout << node << " ";
+    //}
+    //cout << endl;
+    //
+    //cout << graph.preferentialAttachment("C", "A") << endl;
+
+    //pair<string, string> biggest = findLargestJaccard<string>(graph);
+    //cout << "Biggest " << biggest.first << " " << biggest.second << endl;
 
     
     return 0;
