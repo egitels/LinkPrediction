@@ -47,6 +47,14 @@ class NetworkAlgorithms{
         vector<pair<T, T>> getBestAdamicPairs(int num);
         
         vector<pair<T, T>> getBestJaccardPairs(int num);
+        
+        vector<pair<T, T>> getBestCommonNeighborPairs(int num);
+        
+        vector<pair<T, T>> getBestPreferrentialPairs(int num);
+
+        vector<pair<T, T>> getRandomGraphDistance(int num);
+
+        vector<pair<T, T>> getBestBigrams(int num, int delta);
 
         private:
             UndirectedUnweightedGraph<T> graph; 
@@ -307,6 +315,83 @@ vector<pair<T, T>> NetworkAlgorithms<T>::getBestJaccardPairs(int num){
         scores[p] = graph.Jaccard(p.first, p.second);
     }
 
+    return sortAndExtractFrom(scores, num);
+}
+
+template <class T>
+vector<pair<T, T>> NetworkAlgorithms<T>::getBestCommonNeighborPairs(int num){
+    map<pair<T, T>, double> scores;
+    for (pair<T, T> p : length2Pairs){
+        scores[p] = graph.commonNeighbors(p.first, p.second).size();
+    }
+    return sortAndExtractFrom(scores, num);
+}
+
+template <class T>
+vector<pair<T, T>> NetworkAlgorithms<T>::getBestPreferrentialPairs(int num){
+
+    map<T, vector<T>> adjList = graph.getAdjList();
+    typedef std::function<bool(pair<T, vector<T>>, pair<T,vector<T>>)> Comparator;
+    // Defining a lambda function to compare two pairs. It will compare two pairs using second field
+	Comparator compFunctor =
+			[](pair<T, vector<T>> elem1 ,pair<T, vector<T>> elem2)
+			{
+				return elem1.second.size() > elem2.second.size();
+			};
+    std::set<pair<T,vector<T>>, Comparator> sortedSet(
+			adjList.begin(), adjList.end(), compFunctor);
+    
+    vector<T> nodesOfInterest;
+    for (pair<T, vector<T>> val : sortedSet){
+        nodesOfInterest.push_back(val.first);
+        if (nodesOfInterest.size() == 40){
+            break;
+        }
+    }
+
+    map<pair<T, T>, double> scores;
+    UndirectedUnweightedGraph<T> recreated;
+    for (T node1 : nodesOfInterest){
+        for (T node2 : nodesOfInterest){
+            if (node1 != node2 && !recreated.edgeExists(node1, node2)){
+                recreated.addEdge(node1, node2);
+                double score = graph.preferentialAttachment(node1, node2);
+                scores[make_pair(node1, node2)] = score;
+            }
+        }
+    }
+    
+    return sortAndExtractFrom(scores, num);
+}
+
+template <class T>
+vector<pair<T, T>> NetworkAlgorithms<T>::getRandomGraphDistance(int num){
+    
+    srand(time(NULL)); 
+    vector<pair<T, T>> pairs;
+    UndirectedUnweightedGraph<T> chosenEdges;
+    while (pairs.size() < num){
+        int index1 = rand() % graph.getSize();
+        int index2 = rand() % graph.getSize();
+        if (index1 != index2){
+            T node1 = idx2nameDecoding[index1];
+            T node2 = idx2nameDecoding[index2];
+            if (!chosenEdges.edgeExists(node1, node2)){
+                pairs.push_back(make_pair(node1, node2));
+                chosenEdges.addEdge(node1, node2);
+            }   
+        }
+    }
+    return pairs;
+}
+
+template <class T>
+vector<pair<T, T>> NetworkAlgorithms<T>::getBestBigrams(int num, int delta){
+    map<pair<T, T>, double> scores;
+    for (pair<T, T> p : length2Pairs){
+        double bigramScore = graph.Bigram(p.first, p.second, delta);
+        scores[p] = bigramScore;
+    }
     return sortAndExtractFrom(scores, num);
 }
 

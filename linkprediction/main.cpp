@@ -57,8 +57,9 @@ int main(){
     readGraphFromFile(graph2, year6);
     
     graph1 = graph1.GCC();
-    
-    /*UndirectedUnweightedGraph<string> graph1; 
+
+    /*
+    UndirectedUnweightedGraph<string> graph1; 
     graph1.addEdge("A", "B"); 
     graph1.addEdge("A", "C");
     graph1.addEdge("A", "D");
@@ -69,20 +70,54 @@ int main(){
     graph1.addEdge("B", "F");
     */
 
+
     NetworkAlgorithms<string> algorithms(graph1);
     
-    /*vector<pair<string, string>> pairs = algorithms.getBestAdamicPairs(1);
+    /*
+    vector<pair<string, string>> pairs = algorithms.getBestBigrams(2, 3);
     
     for (pair<string, string> p : pairs){
         cout << p.first << " " << p.second << endl;
-    }*/
+    }
+    */
 
     int numGuesses = 1000;
 
-    vector<pair<string, string>> adamicPairs = algorithms.getBestAdamicPairs(numGuesses);
-    double percentCorrect = graph2.percentPairsCorrect(adamicPairs) * 100;
-    printf("Percent correct: %4.3f\n", percentCorrect);
+    double percentCorrect = 0;
     
+    vector<pair<string, string>> bigramPairs1 = algorithms.getBestBigrams(numGuesses, 8);
+    percentCorrect = graph2.percentPairsCorrect(bigramPairs1) * 100;
+    printf("Percent correct (Bigrams with d=8): %4.3f\n", percentCorrect);
+
+    vector<pair<string, string>> bigramPairs2 = algorithms.getBestBigrams(numGuesses, 16);
+    percentCorrect = graph2.percentPairsCorrect(bigramPairs2) * 100;
+    printf("Percent correct (Bigrams with d=16): %4.3f\n", percentCorrect);
+
+
+    /*
+    vector<pair<string, string>> preferrentialAttachmentPairs = algorithms.getBestPreferrentialPairs(numGuesses);
+    percentCorrect = graph2.percentPairsCorrect(preferrentialAttachmentPairs) * 100;
+    printf("Percent correct (Preferrential Attachment): %4.3f\n", percentCorrect);
+    */
+    
+    /*
+    vector<pair<string, string>> graphDistancePairs = algorithms.getRandomGraphDistance(numGuesses);
+    percentCorrect = graph2.percentPairsCorrect(graphDistancePairs) * 100;
+    printf("Percent correct (Graph Distance): %4.3f\n", percentCorrect);
+    
+    vector<pair<string, string>> commonNeighborPairs = algorithms.getBestCommonNeighborPairs(numGuesses);
+    percentCorrect = graph2.percentPairsCorrect(commonNeighborPairs) * 100;
+    printf("Percent correct (Common Neighbors): %4.3f\n", percentCorrect);
+
+    vector<pair<string, string>> jaccardPairs = algorithms.getBestJaccardPairs(numGuesses);
+    percentCorrect = graph2.percentPairsCorrect(jaccardPairs) * 100;
+    printf("Percent correct (Jaccard): %4.3f\n", percentCorrect);
+    
+    vector<pair<string, string>> adamicPairs = algorithms.getBestAdamicPairs(numGuesses);
+    percentCorrect = graph2.percentPairsCorrect(adamicPairs) * 100;
+    printf("Percent correct (Adamic): %4.3f\n", percentCorrect);
+    */
+
     //vector<pair<string, string>> katzPairs = algorithms.getBestKatzPairs(numGuesses, 0.0005, 50);
     //percentCorrect = graph2.percentPairsCorrect(katzPairs) * 100;
     //printf("Percent correct: %4.3f\n", percentCorrect);

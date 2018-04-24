@@ -9,6 +9,9 @@
 #include <list>
 #include <algorithm>
 #include <math.h>
+#include <set>
+#include <algorithm>
+#include <functional>
 using namespace std;
 
 /**
@@ -123,7 +126,7 @@ class UndirectedUnweightedGraph {
         int katzClustering(T node1, T node2);
         /*returns score based on the intersection of the neighbors of nodes similar to x and the neighbors of y
         */
-        int Bigram(T node1, T node2);
+        double Bigram(T node1, T node2, int delta);
     private:
         map<T, vector<T> > adjList;
         
@@ -327,6 +330,43 @@ double UndirectedUnweightedGraph<T>::adamicAdar(T node1, T node2){
 template <class T>
 int UndirectedUnweightedGraph<T>::preferentialAttachment(T node1, T node2){
     return adjList[node1].size() * adjList[node2].size();
+}
+
+template <class T>
+double UndirectedUnweightedGraph<T>::Bigram(T node1, T node2, int delta){
+    map<T, double> scores;
+    for (auto it = adjList.begin(); it != adjList.end(); ++it){
+        T comp = it->first;
+        if (comp != node1 && comp != node2){
+            scores[comp] = Jaccard(comp, node1);
+        }
+    }
+
+    typedef std::function<bool(pair<T, double>, pair<T, double>)> Comparator;
+    // Defining a lambda function to compare two pairs. It will compare two pairs using second field
+	Comparator compFunctor =
+			[](pair<T, double> elem1 ,pair<T, double> elem2)
+			{
+				return elem1.second > elem2.second;
+			};
+    std::set<pair<T,double>, Comparator> sortedSet(
+			scores.begin(), scores.end(), compFunctor);
+
+    vector<T> similar;
+    for (pair<T, double> p : scores){
+        similar.push_back(p.first);
+        if (scores.size() == delta){
+            break;
+        }
+    }
+    vector<T> yNeighbors = adjList[node2];
+
+    sort(similar.begin(), similar.end());
+    sort(yNeighbors.begin(), yNeighbors.end());
+    vector<T> intersection;
+    set_intersection(similar.begin(), similar.end(), yNeighbors.begin(),
+            yNeighbors.end(), inserter(intersection, intersection.begin()));
+    return intersection.size();
 }
 
 template <class T>
