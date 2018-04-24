@@ -8,7 +8,7 @@
 #include <map>
 #include <list>
 #include <algorithm>
-
+#include <math.h>
 using namespace std;
 
 /**
@@ -47,6 +47,8 @@ class UndirectedUnweightedGraph {
          */
         int getSize() const;
         
+        double percentPairsCorrect(vector<pair<T, T>> pair);
+
         /**
          * Return the adjacency list data structure that represents this graph.
          */
@@ -105,7 +107,7 @@ class UndirectedUnweightedGraph {
         *The jaccard * 1/the frequency of similar nodes
         */
 
-        int adamicAdar(T node1, T node2);
+        double adamicAdar(T node1, T node2);
         
         /*
         *The product of the number of neighbors of x and y
@@ -174,6 +176,17 @@ bool UndirectedUnweightedGraph<T>::edgeExists(T node1, T node2){
 template <class T>
 int UndirectedUnweightedGraph<T>::getSize() const{
     return adjList.size();
+}
+
+template <class T>
+double UndirectedUnweightedGraph<T>::percentPairsCorrect(vector<pair<T, T>> pairs){
+    double correct = 0;
+    for (pair<string, string> p : pairs){
+        if (edgeExists(p.first, p.second)){
+            correct++;
+        }
+    }
+    return correct/pairs.size();
 }
 
 template <class T>
@@ -299,6 +312,16 @@ double UndirectedUnweightedGraph<T>::Jaccard(T node1, T node2){
     double all = neighborUnion.size();
 
     return common/all;
+}
+
+template <class T>
+double UndirectedUnweightedGraph<T>::adamicAdar(T node1, T node2){
+    vector<T> common = commonNeighbors(node1, node2);
+    double score = 0;
+    for (T node : common){
+        score += 1 / (log(adjList[node].size()));
+    }
+    return score;
 }
 
 template <class T>

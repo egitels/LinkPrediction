@@ -15,14 +15,11 @@ std::vector<std::string> split(std::string const &string_in){
 }
 
 void readGraphFromFile(UndirectedUnweightedGraph<string>& graph, string graph_file){
-    //std::string GRAPH_FILE = "edgelists/as-ph/1994.txt";
     std::ifstream edgeList;
     edgeList.open(graph_file);
 
     std::string line;
     if (edgeList.is_open()){
-        std::string throwaway;
-        getline (edgeList, throwaway);
         while ( getline (edgeList, line) ){
             std::vector<std::string> edges;
             edges = split(line);
@@ -60,49 +57,50 @@ int main(){
     readGraphFromFile(graph2, year6);
     
     graph1 = graph1.GCC();
-    pair<string, string> biggest = findLargestJaccard<string>(graph1);
-    cout << "Biggest " << biggest.first << " " << biggest.second << endl;
     
-    //cout << graph1.toString() << endl;
-    //cout << graph2.toString() << endl;
-    //cout << graph1.getSize() << endl;
-    //cout << graph2.getSize() << endl; 
-    
-    //UndirectedUnweightedGraph<string> graph; 
-    //graph.addEdge("A", "B"); 
-    //graph.addEdge("A", "D");
-    //graph.addEdge("B", "D");
-    //graph.addEdge("C", "D");
-    //graph.addEdge("C", "E");
-    //graph.addEdge("C", "F");
-    //graph.addEdge("B", "C");
-    //graph.addEdge("B", "F");
-    //graph.addEdge("D", "G");
-    //
-    //graph.addEdge("D", "H");
-    //graph.addEdge("D", "J");
-    //graph.addEdge("D", "Z");
-    //graph.addEdge("H", "I");
-    //graph.addEdge("J", "K");
-    //graph.addEdge("J", "H");
-    //graph.addEdge("Z", "Y");
-    //
-    //graph.addEdge("app", "G");
-    //graph.addEdge("app", "J");
-    //graph.addEdge("app", "oh");
-    //graph.addEdge("app", "my");
-    //cout << "\nCommon neighbors between C and A:" << endl;
-    //vector<string> common = graph.commonNeighbors("C", "A");
-    //for (string node : common){
-    //    cout << node << " ";
-    //}
-    //cout << endl;
-    //
-    //cout << graph.preferentialAttachment("C", "A") << endl;
+    /*UndirectedUnweightedGraph<string> graph1; 
+    graph1.addEdge("A", "B"); 
+    graph1.addEdge("A", "C");
+    graph1.addEdge("A", "D");
+    graph1.addEdge("A", "E");
+    graph1.addEdge("E", "F");
+    graph1.addEdge("D", "F");
+    graph1.addEdge("C", "F");
+    graph1.addEdge("B", "F");
+    */
 
-    //pair<string, string> biggest = findLargestJaccard<string>(graph);
-    //cout << "Biggest " << biggest.first << " " << biggest.second << endl;
+    NetworkAlgorithms<string> algorithms(graph1);
+    
+    /*vector<pair<string, string>> pairs = algorithms.getBestAdamicPairs(1);
+    
+    for (pair<string, string> p : pairs){
+        cout << p.first << " " << p.second << endl;
+    }*/
+
+    int numGuesses = 1000;
+
+    vector<pair<string, string>> adamicPairs = algorithms.getBestAdamicPairs(numGuesses);
+    double percentCorrect = graph2.percentPairsCorrect(adamicPairs) * 100;
+    printf("Percent correct: %4.3f\n", percentCorrect);
+    
+    //vector<pair<string, string>> katzPairs = algorithms.getBestKatzPairs(numGuesses, 0.0005, 50);
+    //percentCorrect = graph2.percentPairsCorrect(katzPairs) * 100;
+    //printf("Percent correct: %4.3f\n", percentCorrect);
+
+    //vector<pair<string, string>> randPairs = algorithms.randomlyGuessEdges(numGuesses);
+    //percentCorrect = graph2.percentPairsCorrect(randPairs) * 100;
+    //printf("Percent correct: %4.3f\n", percentCorrect);
+   
+    
 
     
+    /*map<string, double> k = algorithms.katz_ctrlty(-1, 0.05, 0.0000000001);
+    
+    string out = "";
+    for (auto it = k.begin(); it != k.end(); ++it){
+        cout << it->first + ":" + to_string(it->second) + ", " << endl;
+        cout << endl;
+    }*/
+
     return 0;
 }
