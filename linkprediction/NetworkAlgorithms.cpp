@@ -16,7 +16,7 @@ class NetworkAlgorithms{
         NetworkAlgorithms(UndirectedUnweightedGraph<T> graph){
             this->graph = graph;
             length2Pairs = getNodePairsWithDistance(2);
-
+            cout << length2Pairs.size() << endl;
             map<T, vector<T>> adjList = graph.getAdjList();
             
             int k = 0;
